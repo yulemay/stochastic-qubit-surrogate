@@ -6,4 +6,4 @@ authors:
   - family-names: "Mayevsky"
     given-names: "Yule"
 year: 2026
-repository-code: "https://github.com/yjmsniper/stochastic-qubit-surrogate"
+repository-code: "https://github.com/yulemay/stochastic-qubit-surrogate"
