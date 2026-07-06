@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite this repository."
+title: "Stochastic Qubit Surrogate"
+type: software
+authors:
+  - family-names: "Mayevsky"
+    given-names: "Yule"
+year: 2026
+repository-code: "https://github.com/yjmsniper/stochastic-qubit-surrogate"

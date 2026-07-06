@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stochastic-qubit-surrogate"
+version = "0.1.0"
+description = "TensorFlow GRU black-box modelling of stochastic single-qubit simulation responses."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  {name = "Yule Mayevsky"}
+]
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.12",
+  "matplotlib>=3.8",
+  "scikit-learn>=1.4",
+  "tensorflow>=2.16,<3",
+]
+
+[project.optional-dependencies]
+qutip = ["qutip>=5.0"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
