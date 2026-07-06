@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+
+# TensorFlow
+*.keras
+*.h5
+checkpoint*
+logs/
+
+# MATLAB
+*.asv
+slprj/
+
+# Generated data
+data/raw/*.mat
+data/processed/*.npz
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Generated results
+results/figures/*
+results/models/*
+results/control/*
+!results/figures/.gitkeep
+!results/models/.gitkeep
+!results/control/.gitkeep
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
