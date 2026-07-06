@@ -53,14 +53,14 @@ python --version
 Create or move to the folder where you want the project, then run:
 
 ```bash
-git clone git@github.com:yjmsniper/stochastic-qubit-surrogate.git
+git clone git@github.com:yulemay/stochastic-qubit-surrogate.git
 cd stochastic-qubit-surrogate
 ```
 
 If SSH is not configured for GitHub, the HTTPS clone command can be used instead:
 
 ```bash
-git clone https://github.com/yjmsniper/stochastic-qubit-surrogate.git
+git clone https://github.com/yulemay/stochastic-qubit-surrogate.git
 cd stochastic-qubit-surrogate
 ```
 
