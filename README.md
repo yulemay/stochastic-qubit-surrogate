@@ -1,4 +1,4 @@
-# Stochastic Qubit Surrogate
+ # Stochastic Qubit Surrogate
 
 This repository contains a single-qubit simulation and black-box recurrent model.
 
@@ -695,4 +695,4 @@ See:
 
 ```text
 THIRD_PARTY_NOTICES.md
-```
+``` 
