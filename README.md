@@ -326,24 +326,19 @@ docs/data_schema.md
 ---
 
 ## 3. Train the black-box GRU
+## 3. Train the black-box GRU
 
-The recurrent model is defined in:
+The recurrent response surrogate maps normalised Gaussian pulse sequences of shape `(10, 6)` to the 18-component final Pauli response.
+
+The model is defined in:
 
 ```text
 src/qubit_surrogate/ml_model.py
 ```
 
-Train the model with:
-
-```bash
-python python/train.py \
-    --dataset data/processed/qubit_response_dataset.npz \
-    --config config/default.json
-```
-
 ### Model architecture
 
-The black-box model follows the stacked GRU structure:
+The model uses three stacked GRU layers with 60, 60 and 18 recurrent units:
 
 ```text
 Pulse sequence: (10, 6)
@@ -362,10 +357,10 @@ activation=tanh
 return_sequences=False
         |
         v
-18 predicted measurement outcomes
+18 predicted Pauli expectation values
 ```
 
-In TensorFlow, the model is built from:
+In TensorFlow, the recurrent architecture is:
 
 ```python
 GRU(units=60, return_sequences=True)
@@ -373,33 +368,103 @@ GRU(units=60, return_sequences=True)
 GRU(units=18, activation="tanh", return_sequences=False)
 ```
 
-The final `tanh` layer is used because the targets are Pauli expectation values and lie in the interval `[-1, 1]`.
+The final GRU uses a `tanh` activation because the prediction targets are Pauli expectation values constrained to the interval `[-1, 1]`.
 
-The model is compiled with:
+The model is black-box. Its learning problem is:
+
+```text
+normalised Gaussian pulse sequence
+        |
+        v
+18-component final Pauli response
+```
+
+The recurrent model is not given the Hamiltonian, Liouvillian or classical noise operator used by the MATLAB simulator.
+
+### Training configuration
+
+Default training settings are defined in:
+
+```text
+config/default.json
+```
+
+The default configuration specifies:
+
+```text
+random seed = 7
+training fraction = 0.8
+validation fraction = 0.1
+learning rate = 0.012
+batch size = 256
+maximum epochs = 1000
+early-stopping patience = 100
+```
+
+The remaining examples form the held-out test set.
+
+The model is compiled using:
 
 ```text
 Adam optimiser
-learning rate = 0.012
 mean squared error loss
+mean absolute error metric
 ```
 
-The recurrent model is black-box. Its learning problem is simply:
+### Run training
+
+Train the recurrent surrogate with:
+
+```bash
+python python/train.py \
+    --dataset data/processed/qubit_response_dataset.npz \
+    --config config/default.json
+```
+
+The training workflow:
 
 ```text
-normalised pulse sequence -> final 18-component response
+load processed dataset
+        |
+        v
+validate input and target shapes
+        |
+        v
+create reproducible train / validation / test split
+        |
+        v
+construct and compile stacked GRU
+        |
+        v
+train against 18-component response targets
+        |
+        v
+monitor validation loss
+        |
+        v
+save best model and run metadata
 ```
 
-It is not given the equations used by the MATLAB simulator.
+The expected model arrays are:
+
+```text
+data_input.shape  = (N, 10, 6)
+data_target.shape = (N, 18)
+```
+
+Training uses validation loss for model checkpointing and early stopping.
 
 ### Training outputs
 
-Training files are saved in:
+Training artifacts are written to the output directory specified in `config/default.json`.
+
+The default configuration uses:
 
 ```text
-results/models/
+artifacts/default_run/
 ```
 
-The main outputs are:
+The saved outputs are:
 
 ```text
 best_model.keras
@@ -408,9 +473,13 @@ split_indices.npz
 run_config.json
 ```
 
-The train, validation and test indices are saved so the same held-out examples can be used during evaluation.
+`best_model.keras` contains the best validation-loss checkpoint.
 
----
+`training_history.npz` stores the recorded training and validation metrics.
+
+`split_indices.npz` stores the train, validation and test indices so that the same held-out examples can be reused during evaluation.
+
+`run_config.json` records the training configuration, dataset path, input and target shapes, and sample counts used for the run.
 
 ## 4. Evaluate the trained model
 
